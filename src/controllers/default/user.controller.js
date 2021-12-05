@@ -1,6 +1,6 @@
 import debug from 'debug';
-import UserService from '../services/user.service';
-import { ApplicationError, NotFoundError } from '../helpers/errors.helper';
+import UserService from '../../services/user.service';
+import { ApplicationError, NotFoundError } from '../../helpers/errors.helper';
 
 const DEBUG = debug('dev');
 

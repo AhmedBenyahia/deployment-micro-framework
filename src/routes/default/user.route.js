@@ -1,7 +1,7 @@
 import express from 'express';
-import userController from '../controllers/user.controller';
-import authentication from '../middlewares/authenticate.middleware';
-import catchAsync from '../middlewares/catchAsync.middleware';
+import userController from '../../controllers/default/user.controller';
+import authentication from '../../middlewares/authenticate.middleware';
+import catchAsync from '../../middlewares/catchAsync.middleware';
 
 const { findAllUsers, findUserById, updateUser, deleteUser } = userController;
 const { authenticate } = authentication;

@@ -1,9 +1,9 @@
 import passport from 'passport';
 import debug from 'debug';
-import '../services/passport/passport-local.service';
-import { ApplicationError } from '../helpers/errors.helper';
-import User from '../models/user.model';
-import emailService from '../services/email/sendgrid.service';
+import '../../services/passport/passport-local.service';
+import { ApplicationError } from '../../helpers/errors.helper';
+import User from '../../models/user.model';
+import emailService from '../../services/email/sendgrid.service';
 
 const DEBUG = debug('dev');
 

@@ -27,19 +27,20 @@ import errorHandler from './middlewares/errorHandler.middleware';
  * Routes import
  * @type {Router | {readonly default?: Router}}
  */
-import indexRouter from './routes/index.route';
-import authRouter from './routes/auth.route';
-import userRouter from './routes/user.route';
-import uploadRouter from './routes/upload.route';
+import indexRouter from './routes/default/index.route';
+import authRouter from './routes/default/auth.route';
+import userRouter from './routes/default/user.route';
+import uploadRouter from './routes/default/upload.route';
+import containerRouter from './routes/container.route';
 /**
  * Documentation Router
  */
-import swaggerRouter from './routes/swagger.route';
+import swaggerRouter from './routes/default/swagger.route';
 /**
  * Pub/Sub Routers
  */
-import publisherRouter from './routes/publisher.route';
-import subscriberRouter from './routes/subscriber.route';
+import publisherRouter from './routes/default/publisher.route';
+import subscriberRouter from './routes/default/subscriber.route';
 
 /**
  * import { User } from './models/Users.model';
@@ -185,6 +186,7 @@ app.use('/api/v1/', indexRouter);
 app.use('/api/v1/auth/', authRouter);
 app.use('/api/v1/users/', userRouter);
 app.use('/api/v1/upload/', uploadRouter);
+app.use('/api/v1/container/', containerRouter);
 
 /**
  * Swagger Documentation endpoint

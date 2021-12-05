@@ -1,8 +1,8 @@
 import express from 'express';
-import indexController from '../controllers/index.controller';
+import indexController from '../../controllers/default/index.controller';
 
-import authentication from '../middlewares/authenticate.middleware';
-import catchAsync from '../middlewares/catchAsync.middleware';
+import authentication from '../../middlewares/authenticate.middleware';
+import catchAsync from '../../middlewares/catchAsync.middleware';
 
 const { apiEntryPoint, checkUserLogged } = indexController;
 
