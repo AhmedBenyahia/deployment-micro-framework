@@ -42,7 +42,7 @@ export default {
   stopAppServer: () => {
     shell.echo('######## Stop and Delete the old container ########');
     // eslint-disable-next-line no-unused-expressions
-    !shell.exec('docker stop ltm-api').code && shell.exec('docker rm ltm-api');
+    // !shell.exec('docker stop ltm-api').code && shell.exec('docker rm ltm-api');
   },
 
   removeUnusedObject: () => {
@@ -179,8 +179,9 @@ export default {
     logger.debug(`Database Type ${dbType} mapped to port ${dbPort}`);
     await fs.writeFileSync(
       `${process.env.REPO_DIR}build-run.sh`,
-      ` docker build -t ${imageName}:autoBuild . &&
-             docker run -p ${dbPort}:${dbPort} -p ${serverPort}:${serverPort} --name ${imageName} ${imageName}:autoBuild
+      ` docker stop ${imageName} && docker rm${imageName};
+             docker build -t ${imageName}:autoBuild . &&
+             docker run -p ${dbPort}:${dbPort} -p 5555:${serverPort} --name ${imageName} ${imageName}:autoBuild
          `,
       (err) => {
         if (err) logger.info(err);
