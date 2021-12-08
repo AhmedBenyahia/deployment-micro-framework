@@ -114,9 +114,6 @@ export default {
           if (err) logger.info(err);
         },
       );
-      // Get app server port
-      const serverPort = properties.get('server.port');
-      return { dbName, dbUrl, serverPort };
     }
 
     // Create DB
@@ -127,6 +124,9 @@ export default {
       ).code &&
       shell.echo('######## Succeeded !! ########') &&
       shell.echo(`CREATED DATABASE ${dbName};`);
+    // Get app server port
+    const serverPort = properties.get('server.port');
+    return { dbName, dbUrl, serverPort };
   },
 
   createDockerFile: async ({ dbName, dbUrl, serverPort }) => {
