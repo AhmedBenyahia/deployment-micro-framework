@@ -172,6 +172,22 @@ export default {
       process.env.RD_DB,
       `${process.env.REPO_DIR}src/main/resources/application-prod.properties`,
     );
+    // SET DB User Name
+    shell.sed(
+      '-i',
+      /.*spring.datasource.username.*/,
+      `spring.datasource.username=${process.env.RD_USER}`,
+      `${process.env.REPO_DIR}src/main/resources/application-prod.properties`,
+    );
+
+    // SET DB password
+    shell.sed(
+      '-i',
+      /.*spring.datasource.password.*/,
+      `spring.datasource.password=${process.env.RD_PASS}`,
+      `${process.env.REPO_DIR}src/main/resources/application-prod.properties`,
+    );
+
     // Create shell script to build and run application docker container
     shell.echo('######## Creating my.cnf file ########');
     const imageName = process.env.REPO_DIR.split('/')[2].toLowerCase();
