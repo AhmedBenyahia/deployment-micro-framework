@@ -179,7 +179,7 @@ export default {
     logger.debug(`Database Type ${dbType} mapped to port ${dbPort}`);
     await fs.writeFileSync(
       `${process.env.REPO_DIR}build-run.sh`,
-      ` docker stop ${imageName} && docker rm${imageName};
+      ` docker stop ${imageName} && docker rm ${imageName};
              docker build -t ${imageName}:autoBuild . &&
              docker run -p ${dbPort}:${dbPort} -p 5555:${serverPort} --name ${imageName} ${imageName}:autoBuild
          `,
