@@ -170,7 +170,7 @@ export default {
       '-i',
       '{{localhost}}',
       mainClassPath,
-      `${process.env.REPO_DIR}/src/main/resources/application-prod.properties`,
+      `${process.env.REPO_DIR}src/main/resources/application-prod.properties`,
     );
     // Create shell script to build and run application docker container
     shell.echo('######## Creating my.cnf file ########');
