@@ -126,10 +126,10 @@ export default {
       shell.echo(`CREATED DATABASE ${dbName};`);
     // Get app server port
     const serverPort = properties.get('server.port');
-    return { dbName, dbUrl, serverPort };
+    return { dbType, dbUrl, serverPort };
   },
 
-  createDockerFile: async ({ dbName, dbUrl, serverPort }) => {
+  createDockerFile: async ({ dbType, dbUrl, serverPort }) => {
     logger.info('######## Creating Docker file ########');
     logger.debug(`Current Dir:${shell.pwd()}`);
     logger.info('######## Changing Working Dir ########');
@@ -174,8 +174,8 @@ export default {
     // Create shell script to build and run application docker container
     shell.echo('######## Creating my.cnf file ########');
     const imageName = process.env.REPO_DIR.split('/')[2];
-    const dbPort = dbName === 'mysql' ? '3306' : '1433';
-    logger.debug(`Database Type ${dbName} mapped to port ${dbPort}`);
+    const dbPort = dbType === 'mysql' ? '3306' : '1433';
+    logger.debug(`Database Type ${dbType} mapped to port ${dbPort}`);
     await fs.writeFileSync(
       `${process.env.REPO_DIR}build-run.sh`,
       ` docker build -t ${imageName}:autoBuild . &&
