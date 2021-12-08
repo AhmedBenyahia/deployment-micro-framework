@@ -174,7 +174,7 @@ export default {
     );
     // Create shell script to build and run application docker container
     shell.echo('######## Creating my.cnf file ########');
-    const imageName = process.env.REPO_DIR.split('/')[2];
+    const imageName = process.env.REPO_DIR.split('/')[2].toLowerCase();
     const dbPort = dbType === 'mysql' ? '3306' : '1433';
     logger.debug(`Database Type ${dbType} mapped to port ${dbPort}`);
     await fs.writeFileSync(
