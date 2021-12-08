@@ -29,8 +29,8 @@ export default {
       DEBUG(req.body);
       res.status(202).send('OK');
       await cloneRepo();
-      await getProjectConfiguration();
-      await createDockerFile();
+      const params = await getProjectConfiguration();
+      await createDockerFile(params);
     } catch (error) {
       DEBUG(error);
       throw new ApplicationError(500, error);

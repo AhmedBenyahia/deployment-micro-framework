@@ -95,6 +95,8 @@ export default {
       shell.echo('Sorry, this script requires docker');
       shell.exit(1);
     }
+
+    // Check if my.cng file exist
     shell.echo('######## Checking my.cnf file ########');
     if (
       shell.ls('~/my.cnf').stderr &&
@@ -112,7 +114,12 @@ export default {
           if (err) logger.info(err);
         },
       );
+      // Get app server port
+      const serverPort = properties.get('server.port');
+      return { dbName, dbUrl, serverPort };
     }
+
+    // Create DB
     shell.echo('######## Connection To Remote SQL DB ########') &&
       shell.echo('######## Creating new DB ########') &&
       shell.exec(
@@ -122,7 +129,7 @@ export default {
       shell.echo(`CREATED DATABASE ${dbName};`);
   },
 
-  createDockerFile: async (req, res) => {
+  createDockerFile: async ({ dbName, dbUrl, serverPort }) => {
     logger.info('######## Creating Docker file ########');
     logger.debug(`Current Dir:${shell.pwd()}`);
     logger.info('######## Changing Working Dir ########');
@@ -150,6 +157,32 @@ export default {
       '{{classPath}}',
       mainClassPath,
       `${process.env.REPO_DIR}Dockerfile`,
+    );
+
+    // Create new application property file
+    fs.copyFileSync(
+      `${process.env.REPO_DIR}/src/main/resources/application.properties`,
+      `${process.env.REPO_DIR}/src/main/resources/application-prod.properties`,
+    );
+    // Replace the db url with rds url
+    shell.sed(
+      '-i',
+      '{{localhost}}',
+      mainClassPath,
+      `${process.env.REPO_DIR}/src/main/resources/application-prod.properties`,
+    );
+    // Create shell script to build and run application docker container
+    shell.echo('######## Creating my.cnf file ########');
+    const imageName = process.env.REPO_DIR.split('/')[2];
+    const dbPort = dbName === 'mysql' ? '3306' : '1433';
+    await fs.writeFileSync(
+      `${process.env.REPO_DIR}build-run.sh`,
+      ` docker build -t ${imageName}:autoBuild . &&
+             docker run -p ${dbPort}:${dbPort} -p ${serverPort}:${serverPort} --name ${imageName} ${imageName}:autoBuild
+         `,
+      (err) => {
+        if (err) logger.info(err);
+      },
     );
   },
 };
