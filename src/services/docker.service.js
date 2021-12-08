@@ -29,13 +29,14 @@ export default {
       !shell.exec('git pull').code &&
       // shell.echo("######## Running mvn clean install ########") &&
       // !shell.exec('mvn clean install -DskipTests').code &&
-      shell.echo('######## Building the docker container ########') &&
-      !shell.exec('docker build -t ltm-api:webhook .').code &&
-      shell.echo('######## Starting the docker container ########') &&
-      shell.exec(
-        'docker run -p 5005:5005 -p 3306:3306 --name ltm-api ltm-api:webhook',
-        { async: true }, // mvn -N io.takari:maven:wrapper
-      );
+      // shell.echo('######## Building the docker container ########') &&
+      // !shell.exec('docker build -t ltm-api:webhook .').code &&
+      // shell.echo('######## Starting the docker container ########') &&
+      // shell.exec(
+      //   'docker run -p 5005:5005 -p 3306:3306 --name ltm-api ltm-api:webhook',
+      //   { async: true }, // mvn -N io.takari:maven:wrapper
+      // );
+      shell.exec('bash build-run.sh', { async: true });
   },
 
   stopAppServer: () => {
