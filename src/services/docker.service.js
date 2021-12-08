@@ -1,6 +1,9 @@
 import shell from 'shelljs';
 import PropertiesReader from 'properties-reader';
 import logger from '../utils/logger.utils';
+import * as os from "os";
+
+const fs = require('fs');
 
 export default {
   /**
@@ -10,6 +13,10 @@ export default {
   buildAndRunContainer: async () => {
     if (!shell.which('git')) {
       shell.echo('Sorry, this script requires git');
+      shell.exit(1);
+    }
+    if (!shell.which('docker')) {
+      shell.echo('Sorry, this script requires docker');
       shell.exit(1);
     }
     shell.echo('######## Change dir to repository path ########');
@@ -57,10 +64,59 @@ export default {
     shell.exec(`git checkout ${process.env.REPO_BRANCH}`).code;
   },
 
-  analyseProject: () => {
+  getProjectConfiguration: async () => {
+    // Read project application.properties
     const properties = PropertiesReader(
       `${process.env.REPO_DIR}/src/main/resources/application.properties`,
     );
-    logger.debug(properties.get('spring.datasource.username'));
+    // Get Db params
+    logger.debug(`Datasource: ${properties.get('spring.datasource.url')}`);
+    const dbUrl = properties.get('spring.datasource.url');
+    const dbType = dbUrl.split(':')[1];
+    logger.debug(`DB Type: ${dbType}`);
+    let dbName;
+    if (dbType === 'sqlserver') {
+      dbName = dbUrl
+        .split(';')
+        .filter((c) => c.indexOf('database') > -1)[0]
+        .slice(1);
+    } else {
+      // eslint-disable-next-line prefer-destructuring
+      dbName = dbUrl.split(':')[3].split('/')[1];
+    }
+    if (!['sqlserver', 'mysql'].includes(dbType)) {
+      logger.info('######## DB is not Supported ########');
+      return;
+    }
+    if (!shell.which('docker')) {
+      shell.echo('Sorry, this script requires docker');
+      shell.exit(1);
+    }
+    shell.echo('######## Checking my.cnf file ########');
+    if (
+      shell.ls('~/my.cnf').stderr &&
+      !shell.exec(`grep -Ril -e '[client]' ~/my.cnf `).indexOf(`[client]`) > -1
+    ) {
+      shell.echo('######## Creating my.cnf file ########');
+      await fs.writeFileSync(
+        `${os.homedir()}/my.cnf`,
+        `[client]
+         user=${process.env.RD_USER}
+         password=${process.env.RD_PASS}
+         host=${process.env.RD_DB}
+         `,
+        (err) => {
+          if (err) logger.info(err);
+        },
+      );
+    }
+    shell.echo('######## Connection To Remote SQL DB ########') &&
+      shell.echo('######## Creating new DB ########') &&
+      shell.exec(
+        `mysql --defaults-file=${os.homedir()}/my.cnf -e 'CREATE DATABASE ${dbName};'`,
+      ).code;
+    shell.echo(process.env.RD_PASS) &&
+      shell.echo('######## Succeeded !! ########') &&
+      shell.echo(`CREATED DATABASE ${dbName};`);
   },
 };
