@@ -169,7 +169,7 @@ export default {
     shell.sed(
       '-i',
       'localhost',
-      mainClassPath,
+      dbUrl,
       `${process.env.REPO_DIR}src/main/resources/application-prod.properties`,
     );
     // Create shell script to build and run application docker container
