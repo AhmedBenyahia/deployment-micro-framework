@@ -168,7 +168,7 @@ export default {
     // Replace the db url with rds url
     shell.sed(
       '-i',
-      '{{localhost}}',
+      'localhost',
       mainClassPath,
       `${process.env.REPO_DIR}src/main/resources/application-prod.properties`,
     );
