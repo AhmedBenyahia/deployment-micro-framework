@@ -175,6 +175,7 @@ export default {
     shell.echo('######## Creating my.cnf file ########');
     const imageName = process.env.REPO_DIR.split('/')[2];
     const dbPort = dbName === 'mysql' ? '3306' : '1433';
+    logger.debug(`Database Type ${dbName} mapped to port ${dbPort}`);
     await fs.writeFileSync(
       `${process.env.REPO_DIR}build-run.sh`,
       ` docker build -t ${imageName}:autoBuild . &&
