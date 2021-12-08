@@ -114,8 +114,7 @@ export default {
       shell.echo('######## Creating new DB ########') &&
       shell.exec(
         `mysql --defaults-file=${os.homedir()}/my.cnf -e 'CREATE DATABASE ${dbName};'`,
-      ).code;
-    shell.echo(process.env.RD_PASS) &&
+      ).code &&
       shell.echo('######## Succeeded !! ########') &&
       shell.echo(`CREATED DATABASE ${dbName};`);
   },
