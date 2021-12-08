@@ -1,8 +1,11 @@
 import shell from 'shelljs';
 import PropertiesReader from 'properties-reader';
+import * as os from 'os';
 import logger from '../utils/logger.utils';
-import * as os from "os";
 
+const { dirname } = require('path');
+
+const appDir = dirname(require.main.filename);
 const fs = require('fs');
 
 export default {
@@ -117,5 +120,36 @@ export default {
       ).code &&
       shell.echo('######## Succeeded !! ########') &&
       shell.echo(`CREATED DATABASE ${dbName};`);
+  },
+
+  createDockerFile: async (req, res) => {
+    logger.info('######## Creating Docker file ########');
+    logger.debug(`Current Dir:${shell.pwd()}`);
+    logger.info('######## Changing Working Dir ########');
+    shell.cd(`${process.env.REPO_DIR}src/main`);
+    logger.debug(`Current Dir:${shell.pwd()}`);
+
+    // Find main class path
+    let mainClassPath = shell.exec(
+      'find ./ -type f -name "*Application.java"',
+    ).stdout;
+    mainClassPath = mainClassPath
+      .replace('./java/', '')
+      .replace('.java', '')
+      .replace('\n', '');
+    logger.info(`Main App Class Package: ${mainClassPath}`);
+
+    // In This Step we use a generic docker file for the deployment.
+    // And we user the main class path to configure the docker file entry point.
+    fs.copyFileSync(
+      `${appDir}/../utils/spring-boot-Dockerfile`,
+      `${process.env.REPO_DIR}Dockerfile`,
+    );
+    shell.sed(
+      '-i',
+      '{{classPath}}',
+      mainClassPath,
+      `${process.env.REPO_DIR}Dockerfile`,
+    );
   },
 };

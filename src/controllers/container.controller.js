@@ -8,6 +8,7 @@ const {
   buildAndRunContainer,
   cloneRepo,
   getProjectConfiguration,
+  createDockerFile,
 } = containerService;
 
 export default {
@@ -29,6 +30,7 @@ export default {
       res.status(202).send('OK');
       await cloneRepo();
       await getProjectConfiguration();
+      await createDockerFile();
     } catch (error) {
       DEBUG(error);
       throw new ApplicationError(500, error);
